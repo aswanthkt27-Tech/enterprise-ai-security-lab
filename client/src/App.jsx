@@ -1,122 +1,174 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from "react";
+import "./index.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [message, setMessage] = useState("");
+  const [chat, setChat] = useState([
+    {
+      role: "assistant",
+      text: "Hello Rahul, I am your Enterprise HR AI Assistant. How can I help you today?",
+    },
+  ]);
+  const [loading, setLoading] = useState(false);
+
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const employeeId = import.meta.env.VITE_DEMO_EMPLOYEE_ID || "EMP001";
+
+  const sendMessage = async () => {
+    if (!message.trim()) return;
+
+    const userMessage = message;
+
+    setChat((prev) => [...prev, { role: "user", text: userMessage }]);
+    setMessage("");
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-employee-id": employeeId,
+        },
+        body: JSON.stringify({
+          message: userMessage,
+        }),
+      });
+
+      const data = await response.json();
+
+      setChat((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          text: data.reply || data.message || "No response received.",
+        },
+      ]);
+    } catch {
+      setChat((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          text: "Unable to connect to enterprise backend. Please check the API URL.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-slate-100">
+      <header className="bg-slate-950 text-white px-8 py-5 shadow">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-semibold">Enterprise AI Assistant</h1>
+            <p className="text-sm text-slate-300">
+              HR Operations • Secure Employee Chatbot Demo
+            </p>
+          </div>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <div className="text-right">
+            <p className="text-sm font-medium">Demo User: Rahul Menon</p>
+            <p className="text-xs text-slate-300">Employee ID: {employeeId}</p>
+          </div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <main className="grid grid-cols-12 gap-6 p-6">
+        <aside className="col-span-3 bg-white rounded-2xl shadow p-5">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">
+            Enterprise Portal
+          </h2>
+
+          <div className="space-y-3 text-sm">
+            <div className="p-3 rounded-xl bg-slate-950 text-white">
+              AI HR Assistant
+            </div>
+            <div className="p-3 rounded-xl bg-slate-100 text-slate-700">
+              Employee Profile
+            </div>
+            <div className="p-3 rounded-xl bg-slate-100 text-slate-700">
+              Leave Balance
+            </div>
+            <div className="p-3 rounded-xl bg-slate-100 text-slate-700">
+              Access Control
+            </div>
+            <div className="p-3 rounded-xl bg-slate-100 text-slate-700">
+              Security Testing
+            </div>
+          </div>
+
+          <div className="mt-8 p-4 bg-blue-50 rounded-xl">
+            <p className="text-sm font-semibold text-blue-900">
+              Security Mode
+            </p>
+            <p className="text-xs text-blue-700 mt-1">
+              Requests are sent with employee identity header for demo testing.
+            </p>
+          </div>
+        </aside>
+
+        <section className="col-span-9 bg-white rounded-2xl shadow flex flex-col h-[75vh]">
+          <div className="border-b px-6 py-4">
+            <h2 className="text-lg font-semibold text-slate-900">
+              HR AI Chatbot
+            </h2>
+            <p className="text-sm text-slate-500">
+              Ask about leave balance, HR policy, or employee-related support.
+            </p>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {chat.map((item, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  item.role === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[70%] rounded-2xl px-4 py-3 text-sm ${
+                    item.role === "user"
+                      ? "bg-slate-950 text-white"
+                      : "bg-slate-100 text-slate-800"
+                  }`}
+                >
+                  {item.text}
+                </div>
+              </div>
+            ))}
+
+            {loading && (
+              <div className="text-sm text-slate-500">
+                Enterprise assistant is thinking...
+              </div>
+            )}
+          </div>
+
+          <div className="border-t p-4 flex gap-3">
+            <input
+              className="flex-1 border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-slate-400"
+              placeholder="Ask: What is my leave balance?"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") sendMessage();
+              }}
+            />
+
+            <button
+              onClick={sendMessage}
+              disabled={loading}
+              className="bg-slate-950 text-white px-6 py-3 rounded-xl disabled:opacity-50"
+            >
+              Send
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
