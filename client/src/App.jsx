@@ -11,6 +11,23 @@ function App({ keycloak }) {
   ]);
   const [loading, setLoading] = useState(false);
 
+  // =====================================
+  // Authentication Functions
+  // =====================================
+
+  // Logout handler
+  // Terminates current Keycloak session
+  // and redirects user back to chatbot homepage
+  const handleLogout = () => {
+
+    keycloak.logout({
+
+      redirectUri: "https://enterprise-ai-security-lab.vercel.app",
+
+    });
+
+  };
+
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const employeeId = import.meta.env.VITE_DEMO_EMPLOYEE_ID || "EMP001";
 
@@ -69,9 +86,36 @@ function App({ keycloak }) {
           </div>
 
           <div className="text-right">
-            <p className="text-sm font-medium">User: {keycloak.tokenParsed?.name || "Authenticated User"}</p>
-            <p className="text-xs text-slate-300">Username: {keycloak.tokenParsed?.preferred_username}</p>
-          </div>
+
+  {/* Logged-in User Information */}
+
+  <p className="text-sm font-medium">
+
+    User: {keycloak.tokenParsed?.name || "Authenticated User"}
+
+  </p>
+
+  <p className="text-xs text-slate-300">
+
+    Username: {keycloak.tokenParsed?.preferred_username}
+
+  </p>
+
+  {/* Logout Button */}
+
+  <button
+
+    onClick={handleLogout}
+
+    className="mt-2 bg-white text-slate-950 px-4 py-2 rounded-lg text-xs font-semibold hover:bg-slate-200"
+
+  >
+
+    Logout
+
+  </button>
+
+</div>
         </div>
       </header>
 
