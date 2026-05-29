@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./index.css";
 
-function App() {
+function App({ keycloak }) {
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([
     {
@@ -69,8 +69,8 @@ function App() {
           </div>
 
           <div className="text-right">
-            <p className="text-sm font-medium">Demo User: Rahul Menon</p>
-            <p className="text-xs text-slate-300">Employee ID: {employeeId}</p>
+            <p className="text-sm font-medium">User: {keycloak.tokenParsed?.name || "Authenticated User"}</p>
+            <p className="text-xs text-slate-300">Username: {keycloak.tokenParsed?.preferred_username}</p>
           </div>
         </div>
       </header>
