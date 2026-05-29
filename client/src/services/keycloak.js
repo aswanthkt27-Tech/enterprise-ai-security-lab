@@ -1,7 +1,7 @@
 import Keycloak from "keycloak-js";
 
 const keycloak = new Keycloak({
-  url: "http://localhost:8080",
+  url: "https://enterprise-keycloak.onrender.com",
   realm: "enterprise-lab",
   clientId: "enterprise-chatbot",
 });
